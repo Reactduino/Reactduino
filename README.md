@@ -12,23 +12,16 @@ This application will write what it reads back to the serial port.
 #include <Arduino.h>
 #include <Reactduino.h>
 
-Reactduino app;
-
 void onSerialData(void)
 {
   Serial.write(Serial.read());
 }
 
-void setup(void)
+void React::setup(void)
 {
   Serial.begin(9600);
 
-  app.onAvailable(Serial, onSerialData);
-}
-
-void loop(void)
-{
-  app.tick();
+  react.onAvailable(Serial, onSerialData);
 }
 ```
 
@@ -41,23 +34,16 @@ This application will write data 'Hello' to the serial port every 10 seconds.
 #include <Arduino.h>
 #include <Reactduino.h>
 
-Reactduino app;
-
 void onInterval(void)
 {
   Serial.println("World");
 }
 
-void setup(void)
+void React::setup(void)
 {
   Serial.begin(9600);
 
-  app.onInterval(10 * 1000, onInterval);
-  // Use app.onTimer() for a one off timer
-}
-
-void loop(void)
-{
-  app.tick();
+  react.repeat(10 * 1000, onInterval);
+  // Use react.delay() for a one off timer
 }
 ```
