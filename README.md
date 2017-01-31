@@ -8,7 +8,23 @@ An asynchronous programming library for the Arduino platform.
 
 This application will write what it reads back to the serial port.
 
-```c
+```cpp
+#include <Arduino.h>
+#include <Reactduino.h>
+
+void React::setup(void)
+{
+  Serial.begin(9600);
+
+  react.onAvailable(Serial, [] (void) {
+    Serial.write(Serial.read());
+  });
+}
+```
+
+This program is equivalent to:
+
+```cpp
 #include <Arduino.h>
 #include <Reactduino.h>
 
@@ -30,7 +46,25 @@ void React::setup(void)
 
 This application will write data 'Hello' to the serial port every 10 seconds.
 
-```c
+```cpp
+#include <Arduino.h>
+#include <Reactduino.h>
+
+void React::setup(void)
+{
+  Serial.begin(9600);
+
+  react.repeat(10 * 1000, [] (void) {
+    Serial.println("Hello");
+  });
+ 
+  // Use react.delay() for a one off timer
+}
+```
+
+This program is equivalent to:
+
+```cpp
 #include <Arduino.h>
 #include <Reactduino.h>
 
