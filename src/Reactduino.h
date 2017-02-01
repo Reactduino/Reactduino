@@ -21,6 +21,9 @@ typedef int32_t reaction;
 #define REACTION_TYPE_REPEAT 1
 #define REACTION_TYPE_STREAM 2
 #define REACTION_TYPE_INTERRUPT 3
+#define REACTION_TYPE_TICK 4
+
+#define REACTION_TYPE(x) ((x) & REACTION_TYPE_MASK)
 
 typedef struct reaction_entry_t_ {
     uint8_t flags;
@@ -44,6 +47,7 @@ public:
     reaction onPinRising(uint8_t pin, react_callback cb);
     reaction onPinFalling(uint8_t pin, react_callback cb);
     reaction onPinChange(uint8_t pin, react_callback cb);
+    reaction onTick(react_callback cb);
 
     void enable(reaction r);
     void disable(reaction r);
