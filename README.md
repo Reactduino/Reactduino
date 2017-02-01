@@ -29,8 +29,9 @@ Using Reactduino, the sketch can be rewritten to the following:
 Reactduino app([] () {
   pinMode(LED_BUILTIN, OUTPUT);
 
-  app.delay(1000, [] () {
-      digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+  app.repeat(1000, [] () {
+      static bool state = false;
+      digitalWrite(LED_BUILTIN, state = !state);
   });
 });
 ```
@@ -44,6 +45,8 @@ There is no `setup()` or `loop()`, Reactduino will define these for you. All you
 Charlie wants to make a simple program which echoes data on the `Serial` port. Their Arduino sketch will looks like this:
 
 ```cpp
+#include <Arduino.h>
+
 void setup()
 {
     Serial.begin(9600);
@@ -62,6 +65,8 @@ void loop()
 This works, but Charlie decides that they would like to blink the built-in LED every time it processes data. Now, their sketch looks like this:
 
 ```cpp
+#include <Arduino.h>
+
 void setup()
 {
     Serial.begin(9600);
@@ -87,6 +92,8 @@ The problem with this sketch is that whilst the LED is blinking, Charlie's progr
 To solve this problem, Charlie refactors their code to look something like this:
 
 ```cpp
+#include <Arduino.h>
+
 uint32_t start;
 bool blink = false;
 
@@ -103,7 +110,7 @@ void loop()
 
         blink = true;
         start = millis();
-        digitlWrite(LED_BUILTIN, HIGH);
+        digitalWrite(LED_BUILTIN, HIGH);
     }
 
     if (blink && millis() - start > 1000) {
