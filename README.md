@@ -148,3 +148,67 @@ Reactduino app([] () {
   });
 });
 ```
+
+## API
+
+### Event Registration Functions
+
+All of the registration functions return a `reaction`. This is either a number which can be used to enable, disable or free the event, or `INVALID_REACTION`.
+
+```cpp
+reaction app.delay(uint32_t t, react_callback cb);
+```
+
+Delay the executation of a callback by `t` milliseconds.
+
+```cpp
+reaction app.repeat(uint32_t t, react_callback cb);
+```
+
+Repeatedly execute a callback every `t` milliseconds.
+
+```cpp
+reaction app.onAvailable(Stream *stream, react_callback cb);
+```
+
+Execute a callback when there is data available to read on an input stream (such as `&Serial`).
+
+```cpp
+reaction app.onInterrupt(uint8_t number, react_callback cb, int mode);
+```
+
+Execute a callback when an interrupt number fires. This uses the same API as the `attachInterrupt()` Arduino function.
+
+```cpp
+reaction app.onPinRising(uint8_t pin, react_callback cb);
+```
+
+Execute a callback when a rising voltage is detected on a pin. Make sure the pin provided is an interrupt pin.
+
+```cpp
+reaction app.onPinFalling(uint8_t pin, react_callback cb);
+```
+
+Execute a callback when a falling voltage is detected on a pin. Make sure the pin provided is an interrupt pin.
+
+```cpp
+reaction app.onPinChange(uint8_t pin, react_callback cb);
+```
+
+Execute a callback when a changing voltage is detected on a pin. Make sure the pin provided is an interrupt pin.
+
+```cpp
+reaction app.onTick(react_callback cb);
+```
+
+Execute a callback on every tick of the event loop.
+
+### Management functions
+
+These functions are used to enable, disable and free events registered with the functions above.
+
+```cpp
+void app.enable(reaction r);
+void app.disable(reaction r);
+void app.free(reaction r);
+```
