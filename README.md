@@ -1,5 +1,10 @@
 # Reactduino
 
+![C++](https://img.shields.io/badge/langauge-C++-blue.svg)
+[![Build Status](https://travis-ci.org/SmarterUM/micro-aes.svg?branch=master)](https://travis-ci.org/SmarterUM/micro-aes)
+
+By [AndrewCarterUK ![(Twitter)](http://i.imgur.com/wWzX9uB.png)](https://twitter.com/AndrewCarterUK)
+
 An asynchronous programming library for the Arduino platform.
 
 ## Blink
