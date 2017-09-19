@@ -1,0 +1,23 @@
+{
+  "name": "Reactduino",
+  "keywords": "reactduino, async",
+  "description": "Asynchronous programming library for Arduino",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/Reactduino/Reactduino.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Andrew Carter",
+      "email": "andrewcarter1992@gmail.com",
+      "url": "https://andrew.carterlunn.co.uk/",
+      "maintainer": true
+    }
+  ],
+  "dependencies": [],
+  "version": "0.1.0",
+  "frameworks": "arduino",
+  "platforms": "*"
+}
