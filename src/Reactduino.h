@@ -28,8 +28,8 @@ typedef int32_t reaction;
 
 #define INPUT_STATE_HIGH    HIGH
 #define INPUT_STATE_LOW     LOW
-#define INPUT_STATE_ANY     0xff
-#define INPUT_STATE_UNSET   0xfe
+#define INPUT_STATE_ANY     0xFF
+#define INPUT_STATE_UNSET   0xFE
 
 typedef struct reaction_entry_t_ {
     uint8_t flags;
@@ -50,7 +50,6 @@ public:
     reaction repeat(uint32_t t, react_callback cb);
     reaction onAvailable(Stream *stream, react_callback cb);
     reaction onInterrupt(uint8_t number, react_callback cb, int mode);
-    reaction onInputChange(uint8_t number, react_callback cb, int state);
     reaction onPinRising(uint8_t pin, react_callback cb);
     reaction onPinFalling(uint8_t pin, react_callback cb);
     reaction onPinChange(uint8_t pin, react_callback cb);
@@ -69,6 +68,8 @@ private:
     reaction _top = 0;
 
     reaction alloc(uint8_t type, react_callback cb);
+
+    reaction onInputChange(uint8_t number, react_callback cb, int state);
 };
 
 extern Reactduino app;

@@ -37,10 +37,7 @@ void Reactduino::setup(void)
 void Reactduino::tick(void)
 {
     reaction r;
-    uint32_t now = millis();    // better caching the current time, since it is used in
-                                // several places. This way we both optimize by calling millis()
-                                // only once, and we ensure having a consistent time when managing
-                                // iall the reactions.
+    uint32_t now = millis();    
 
     for (r = 0; r < _top; r++) {
         if (!(_table[r].flags & REACTION_FLAG_ALLOCATED) || !(_table[r].flags & REACTION_FLAG_ENABLED)) {
@@ -96,10 +93,11 @@ void Reactduino::tick(void)
 
             case REACTION_TYPE_INPUT_CHANGE: {
                 input_change_specs_t specs;
+                uint8_t new_state, last_state;
+                
                 specs.as_uint32 = _table[r].param1;
-
-                uint8_t new_state = digitalRead(specs.detail.pin);
-                uint8_t last_state = (uint8_t)_table[r].param2;
+                new_state = digitalRead(specs.detail.pin);
+                last_state = (uint8_t)_table[r].param2;
 
                 if (new_state != last_state) {
                     if (specs.detail.state == INPUT_STATE_ANY || new_state == specs.detail.state){
@@ -198,6 +196,7 @@ reaction Reactduino::onInterrupt(uint8_t number, react_callback cb, int mode)
 reaction Reactduino::onInputChange(uint8_t pin, react_callback cb, int state)
 {
     reaction r;
+    input_change_specs_t specs;
 
     r = alloc(REACTION_TYPE_INPUT_CHANGE, cb);
 
@@ -205,7 +204,6 @@ reaction Reactduino::onInputChange(uint8_t pin, react_callback cb, int state)
         return INVALID_REACTION;
     }
 
-    input_change_specs_t specs;
     specs.detail.pin = pin;
     specs.detail.state = state;
 
