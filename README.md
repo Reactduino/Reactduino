@@ -198,6 +198,26 @@ reaction app.onPinChange(uint8_t pin, react_callback cb);
 Execute a callback when a changing voltage is detected on a pin. Make sure the pin provided is an interrupt pin.
 
 ```cpp
+reaction app.onPinRisingNoInt(uint8_t pin, react_callback cb);
+```
+
+Same as `onPinRising`, but without using interrupts. Useful for attaching a change callback to a pin 
+not triggering interrupts.
+
+```cpp
+reaction app.onPinFallingNoInt(uint8_t pin, react_callback cb);
+```
+
+Same as `onPinFalling`, but without using interrupts. Useful for attaching a change callback to a pin 
+not triggering interrupts.
+
+```cpp
+reaction app.onPinChangeNoInt(uint8_t pin, react_callback cb);
+```
+
+Same as `onPinChange`, but without using interrupts. Useful for attaching a change callback to a pin 
+not triggering interrupts.
+```cpp
 reaction app.onTick(react_callback cb);
 ```
 

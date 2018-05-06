@@ -22,8 +22,14 @@ typedef int32_t reaction;
 #define REACTION_TYPE_STREAM 2
 #define REACTION_TYPE_INTERRUPT 3
 #define REACTION_TYPE_TICK 4
+#define REACTION_TYPE_INPUT_CHANGE 5
 
 #define REACTION_TYPE(x) ((x) & REACTION_TYPE_MASK)
+
+#define INPUT_STATE_HIGH    HIGH
+#define INPUT_STATE_LOW     LOW
+#define INPUT_STATE_ANY     0xff
+#define INPUT_STATE_UNSET   0xfe
 
 typedef struct reaction_entry_t_ {
     uint8_t flags;
@@ -44,9 +50,13 @@ public:
     reaction repeat(uint32_t t, react_callback cb);
     reaction onAvailable(Stream *stream, react_callback cb);
     reaction onInterrupt(uint8_t number, react_callback cb, int mode);
+    reaction onInputChange(uint8_t number, react_callback cb, int state);
     reaction onPinRising(uint8_t pin, react_callback cb);
     reaction onPinFalling(uint8_t pin, react_callback cb);
     reaction onPinChange(uint8_t pin, react_callback cb);
+    reaction onPinRisingNoInt(uint8_t pin, react_callback cb);
+    reaction onPinFallingNoInt(uint8_t pin, react_callback cb);
+    reaction onPinChangeNoInt(uint8_t pin, react_callback cb);
     reaction onTick(react_callback cb);
 
     void enable(reaction r);

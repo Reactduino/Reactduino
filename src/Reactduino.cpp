@@ -4,6 +4,16 @@
 #include "Reactduino.h"
 #include "ReactduinoISR.h"
 
+
+typedef union {
+    uint32_t as_uint32;
+    struct {
+        uint8_t pin;
+        uint8_t state;
+    } detail;
+} input_change_specs_t;
+
+
 void setup(void)
 {
     app.setup();
@@ -27,6 +37,10 @@ void Reactduino::setup(void)
 void Reactduino::tick(void)
 {
     reaction r;
+    uint32_t now = millis();    // better caching the current time, since it is used in
+                                // several places. This way we both optimize by calling millis()
+                                // only once, and we ensure having a consistent time when managing
+                                // iall the reactions.
 
     for (r = 0; r < _top; r++) {
         if (!(_table[r].flags & REACTION_FLAG_ALLOCATED) || !(_table[r].flags & REACTION_FLAG_ENABLED)) {
@@ -37,7 +51,7 @@ void Reactduino::tick(void)
             case REACTION_TYPE_DELAY: {
                 uint32_t elapsed;
 
-                elapsed = millis() - _table[r].param1;
+                elapsed = now - _table[r].param1;
 
                 if (elapsed >= _table[r].param2) {
                     free(r);
@@ -50,10 +64,10 @@ void Reactduino::tick(void)
             case REACTION_TYPE_REPEAT: {
                 uint32_t elapsed;
 
-                elapsed = millis() - _table[r].param1;
+                elapsed = now - _table[r].param1;
 
                 if (elapsed >= _table[r].param2) {
-                    _table[r].param1 = millis();
+                    _table[r].param1 = now;
                     _table[r].cb();
                 }
 
@@ -79,6 +93,23 @@ void Reactduino::tick(void)
 
                 break;
             }
+
+            case REACTION_TYPE_INPUT_CHANGE: {
+                input_change_specs_t specs;
+                specs.as_uint32 = _table[r].param1;
+
+                uint8_t new_state = digitalRead(specs.detail.pin);
+                uint8_t last_state = (uint8_t)_table[r].param2;
+
+                if (new_state != last_state) {
+                    if (specs.detail.state == INPUT_STATE_ANY || new_state == specs.detail.state){
+                        _table[r].cb();
+                    }
+                    _table[r].param2 = new_state;
+                }
+
+                break;
+            }  
 
             case REACTION_TYPE_TICK: {
                 _table[r].cb();
@@ -164,6 +195,26 @@ reaction Reactduino::onInterrupt(uint8_t number, react_callback cb, int mode)
     return r;
 }
 
+reaction Reactduino::onInputChange(uint8_t pin, react_callback cb, int state)
+{
+    reaction r;
+
+    r = alloc(REACTION_TYPE_INPUT_CHANGE, cb);
+
+    if (r == INVALID_REACTION) {
+        return INVALID_REACTION;
+    }
+
+    input_change_specs_t specs;
+    specs.detail.pin = pin;
+    specs.detail.state = state;
+
+    _table[r].param1 = specs.as_uint32;   
+    _table[r].param2 = INPUT_STATE_UNSET;   // param2 is used to store the last state
+
+    return r;
+}
+
 reaction Reactduino::onPinRising(uint8_t pin, react_callback cb)
 {
     return onInterrupt(digitalPinToInterrupt(pin), cb, RISING);
@@ -177,6 +228,21 @@ reaction Reactduino::onPinFalling(uint8_t pin, react_callback cb)
 reaction Reactduino::onPinChange(uint8_t pin, react_callback cb)
 {
     return onInterrupt(digitalPinToInterrupt(pin), cb, CHANGE);
+}
+
+reaction Reactduino::onPinRisingNoInt(uint8_t pin, react_callback cb)
+{
+    return onInputChange(pin, cb, INPUT_STATE_HIGH);
+}
+
+reaction Reactduino::onPinFallingNoInt(uint8_t pin, react_callback cb)
+{
+    return onInputChange(pin, cb, INPUT_STATE_LOW);
+}
+
+reaction Reactduino::onPinChangeNoInt(uint8_t pin, react_callback cb)
+{
+    return onInputChange(pin, cb, INPUT_STATE_ANY);
 }
 
 reaction Reactduino::onTick(react_callback cb)
