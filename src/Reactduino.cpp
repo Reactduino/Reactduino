@@ -40,19 +40,21 @@ void Reactduino::tick(void)
     uint32_t now = millis();    
 
     for (r = 0; r < _top; r++) {
-        if (!(_table[r].flags & REACTION_FLAG_ALLOCATED) || !(_table[r].flags & REACTION_FLAG_ENABLED)) {
+        reaction_entry_t& r_entry = _table[r];
+
+        if (!(r_entry.flags & REACTION_FLAG_ALLOCATED) || !(r_entry.flags & REACTION_FLAG_ENABLED)) {
             continue;
         }
 
-        switch (REACTION_TYPE(_table[r].flags)) {
+        switch (REACTION_TYPE(r_entry.flags)) {
             case REACTION_TYPE_DELAY: {
                 uint32_t elapsed;
 
-                elapsed = now - _table[r].param1;
+                elapsed = now - r_entry.param1;
 
-                if (elapsed >= _table[r].param2) {
+                if (elapsed >= r_entry.param2) {
                     free(r);
-                    _table[r].cb();
+                    r_entry.cb();
                 }
 
                 break;
@@ -61,11 +63,11 @@ void Reactduino::tick(void)
             case REACTION_TYPE_REPEAT: {
                 uint32_t elapsed;
 
-                elapsed = now - _table[r].param1;
+                elapsed = now - r_entry.param1;
 
-                if (elapsed >= _table[r].param2) {
-                    _table[r].param1 = now;
-                    _table[r].cb();
+                if (elapsed >= r_entry.param2) {
+                    r_entry.param1 = now;
+                    r_entry.cb();
                 }
 
                 break;
@@ -74,18 +76,18 @@ void Reactduino::tick(void)
             case REACTION_TYPE_STREAM: {
                 Stream *stream;
 
-                stream = (Stream *) _table[r].ptr;
+                stream = (Stream *) r_entry.ptr;
 
                 if (stream->available()) {
-                    _table[r].cb();
+                    r_entry.cb();
                 }
 
                 break;
             }
 
             case REACTION_TYPE_INTERRUPT: {
-                if (react_isr_check(_table[r].param2)) {
-                    _table[r].cb();
+                if (react_isr_check(r_entry.param2)) {
+                    r_entry.cb();
                 }
 
                 break;
@@ -95,22 +97,22 @@ void Reactduino::tick(void)
                 input_change_specs_t specs;
                 uint8_t new_state, last_state;
                 
-                specs.as_uint32 = _table[r].param1;
+                specs.as_uint32 = r_entry.param1;
                 new_state = digitalRead(specs.detail.pin);
-                last_state = (uint8_t)_table[r].param2;
+                last_state = (uint8_t)r_entry.param2;
 
                 if (new_state != last_state) {
                     if (specs.detail.state == INPUT_STATE_ANY || new_state == specs.detail.state){
-                        _table[r].cb();
+                        r_entry.cb();
                     }
-                    _table[r].param2 = new_state;
+                    r_entry.param2 = new_state;
                 }
 
                 break;
             }  
 
             case REACTION_TYPE_TICK: {
-                _table[r].cb();
+                r_entry.cb();
 
                 break;
             }
