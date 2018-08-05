@@ -45,6 +45,9 @@ public:
     void setup(void);
     void tick(void);
 
+    // static singleton reference to the instantiated Reactduino object
+    static Reactduino* app;
+
     // Public API
     reaction delay(uint32_t t, react_callback cb);
     reaction repeat(uint32_t t, react_callback cb);
@@ -71,7 +74,5 @@ private:
 
     reaction onInputChange(uint8_t number, react_callback cb, int state);
 };
-
-extern Reactduino app;
 
 #endif

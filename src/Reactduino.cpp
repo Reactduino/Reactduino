@@ -4,6 +4,8 @@
 #include "Reactduino.h"
 #include "ReactduinoISR.h"
 
+// Need to define the static variable outside of the class
+Reactduino* Reactduino::app = NULL;
 
 typedef union {
     uint32_t as_uint32;
@@ -16,17 +18,18 @@ typedef union {
 
 void setup(void)
 {
-    app.setup();
+    Reactduino::app->setup();
 }
 
 void loop(void)
 {
-    app.tick();
+    Reactduino::app->tick();
     yield();
 }
 
 Reactduino::Reactduino(react_callback cb) : _setup(cb)
 {
+    app = this;
 }
 
 void Reactduino::setup(void)
