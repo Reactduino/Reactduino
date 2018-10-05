@@ -4,7 +4,6 @@
 #include "Reactduino.h"
 #include "ReactduinoISR.h"
 
-
 typedef union {
     uint32_t as_uint32;
     struct {
@@ -12,7 +11,6 @@ typedef union {
         uint8_t state;
     } detail;
 } input_change_specs_t;
-
 
 void setup(void)
 {
@@ -86,7 +84,7 @@ void Reactduino::tick(void)
             }
 
             case REACTION_TYPE_INTERRUPT: {
-                if (react_isr_check(r_entry.param2)) {
+                if (react_isr_check(r_entry.param1)) {
                     r_entry.cb();
                 }
 
@@ -99,12 +97,13 @@ void Reactduino::tick(void)
                 
                 specs.as_uint32 = r_entry.param1;
                 new_state = digitalRead(specs.detail.pin);
-                last_state = (uint8_t)r_entry.param2;
+                last_state = (uint8_t) r_entry.param2;
 
                 if (new_state != last_state) {
                     if (specs.detail.state == INPUT_STATE_ANY || new_state == specs.detail.state){
                         r_entry.cb();
                     }
+
                     r_entry.param2 = new_state;
                 }
 
