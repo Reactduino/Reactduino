@@ -33,7 +33,7 @@ typedef int32_t reaction;
 
 typedef struct reaction_entry_t_ {
     uint8_t flags;
-    void *ptr;
+    void * ptr;
     uint32_t param1, param2;
     react_callback cb;
 } reaction_entry_t;
@@ -48,7 +48,7 @@ public:
     // Public API
     reaction delay(uint32_t t, react_callback cb);
     reaction repeat(uint32_t t, react_callback cb);
-    reaction onAvailable(Stream *stream, react_callback cb);
+    reaction onAvailable(Stream * stream, react_callback cb);
     reaction onInterrupt(uint8_t number, react_callback cb, int mode);
     reaction onPinRising(uint8_t pin, react_callback cb);
     reaction onPinFalling(uint8_t pin, react_callback cb);
