@@ -86,7 +86,7 @@ void Reactduino::tick(void)
             }
 
             case REACTION_TYPE_INTERRUPT: {
-                if (react_isr_check(r_entry.param2)) {
+                if (react_isr_check(r_entry.param1)) {
                     r_entry.cb();
                 }
 
