@@ -51,7 +51,7 @@ void Reactduino::tick(void)
                 elapsed = now - r_entry.param1;
 
                 if (elapsed >= r_entry.param2) {
-                    free(r);
+                    disable(r);
                     r_entry.cb();
                 }
 
@@ -72,7 +72,7 @@ void Reactduino::tick(void)
             }
 
             case REACTION_TYPE_STREAM: {
-                Stream *stream;
+                Stream * stream;
 
                 stream = (Stream *) r_entry.ptr;
 
@@ -151,7 +151,7 @@ reaction Reactduino::repeat(uint32_t t, react_callback cb)
     return r;
 }
 
-reaction Reactduino::onAvailable(Stream *stream, react_callback cb)
+reaction Reactduino::onAvailable(Stream * stream, react_callback cb)
 {
     reaction r;
 
