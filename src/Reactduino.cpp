@@ -35,10 +35,10 @@ void Reactduino::setup(void)
 void Reactduino::tick(void)
 {
     reaction r;
-    uint32_t now = millis();    
 
     for (r = 0; r < _top; r++) {
         reaction_entry_t& r_entry = _table[r];
+        uint32_t now = millis();
 
         if (!(r_entry.flags & REACTION_FLAG_ALLOCATED) || !(r_entry.flags & REACTION_FLAG_ENABLED)) {
             continue;
