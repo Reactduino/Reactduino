@@ -236,3 +236,4 @@ void app.free(reaction r);
 ### Examples
 
 - [`Complex`](examples/complex.cpp): Demonstrates several different reaction types for controlling a servo, monitoring inputs and blinking an LED.
+- [`Method_cb`](examples/method_cb.cpp): Demonstrates how to use class methods as callbacks.
